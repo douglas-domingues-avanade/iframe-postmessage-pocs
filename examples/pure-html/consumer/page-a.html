@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Página A</title>
+    <style>
+      iframe {
+        width: calc(100vw - 30px);
+        height: 400px;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Página A</h1>
+    <div id="originDisplay"></div>
+    <br><br>
+    <iframe id="iframeB" src="http://127.0.0.1:5501/page-b.html?valorDaPaginaA=xpto"></iframe>
+    <div id="valorDaPaginaBpostMsg"></div>
+
+    <script>
+      function receiveMessage(event) {
+        const message = (event.data);
+        const iframeB = document.getElementById('iframeB');
+        iframeB.contentWindow.postMessage(({ type: message.type+'-result', success: true, message: 'Produtos processados' }), '*');
+        const valorDaPaginaApostMsg = document.getElementById('valorDaPaginaBpostMsg')
+        valorDaPaginaApostMsg.innerHTML = 'Valor recebido da Página B via postMessage: <br><pre>' + JSON.parse(event.data)+'</pre><p>'+ 'Tipo: ' +
+          message.type + '<br>' +
+          message.items.length + ' itens recebidos:<br>' + 
+          message.items.map(item => `<li>${item.amount}x ${item.productCode}</li>`).join('\n') +'</p>';
+      }
+
+      window.addEventListener("message", receiveMessage, false);
+      document.getElementById('originDisplay').innerHTML = 'Origin: ' + window.location.origin;
+    </script>
+  </body>
+
+</html>

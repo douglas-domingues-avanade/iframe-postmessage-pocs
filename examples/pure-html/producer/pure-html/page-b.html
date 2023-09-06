@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Página B</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Página B</h1>
+    <div id="originDisplay"></div>
+
+    <button onclick="sendMessage()">Enviar Mensagem para Página A</button>
+    <div id="valorDaPaginaAqs"></div>
+    <div id="valorDaPaginaApostMsg"></div>
+
+    <script>
+      function sendMessage() {
+        var message = ({ type:'import', items: [{ productCode: '123456', amount: 3 },{ productCode: '321456', amount: 1 }] });
+        alert("[Página B] Enviando mensagem para Página A: " + JSON.stringify(message));
+        parent.postMessage(message, "*");
+      }
+      window.addEventListener('message', function(event) {
+        document.getElementById('valorDaPaginaApostMsg').innerText = 'Valor recebido da Página A via postMessage: ' + JSON.stringify(event.data);
+      }, false);
+      document.getElementById('valorDaPaginaAqs').innerText = 'Valor recebido da Página A via query string (campo: valorDaPaginaA): ' + new URLSearchParams(window.location.search).get('valorDaPaginaA');
+    
+      document.getElementById('originDisplay').innerHTML = 'Origin: ' + window.location.origin;
+    </script>
+  </body>
+
+</html>
